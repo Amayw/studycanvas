@@ -13,26 +13,71 @@
       #canvas {
         display: block;
       }
+
+      #primary_color {
+        margin: 5px;
+        border-radius: 100%;
+        height: 50px;
+        width: 50px;
+        border: none;
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      #primary_color::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+      #primary_color::-webkit-color-swatch {
+        border: none;
+        border-radius: 50%;
+      }
+      span {
+        width: 100px;
+        height: 100px;
+      }
     </style>
   </head>
   <body>
-    <canvas id="canvas" width="100" height="100"></canvas>
+    <div class="container">
+      <input type="color" id="primary_color" class="field-radio" />
+      <span class="container" id="color_val"></span>
+      <button id="clear">eraser</button>
+    </div>
+    <canvas id="canvas" width="100" height="100"> </canvas>
     <script>
-      // document.body.addEventListener(
-      //   "touchmove",
-      //   function (e) {
-      //     e.preventDefault(); //阻止默认的处理方式(阻止下拉滑动的效果)
-      //   },
-      //   { passive: false }
-      // ); //passive 参数不能省略，用来兼容ios和android
-      let canvas = document.getElementById("canvas");
-      let ctx = canvas.getContext("2d");
+      document.body.addEventListener(
+        "touchmove",
+        function (e) {
+          e.preventDefault(); //阻止默认的处理方式(阻止下拉滑动的效果)
+        },
+        { passive: false }
+      ); //passive 参数不能省略，用来兼容ios和android
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
+      ctx.strokeStyle = "#000";
+
+      //修改颜色
+      var colorButton = document.getElementById("primary_color");
+      var colorDiv = document.getElementById("color_val");
+      var clear = document.getElementById("clear");
+
+      colorButton.onchange = function () {
+        colorDiv.innerHTML = colorButton.value;
+        colorDiv.style.color = colorButton.value;
+        ctx.strokeStyle = colorButton.value;
+      };
+
+      clear.onclick = function () {
+        ctx.strokeStyle = "rgba(255,255,255,1)";
+        ctx.lineWidth = 30;
+      };
 
       canvas.width = document.documentElement.clientWidth;
       canvas.height = document.documentElement.clientHeight;
 
-      let painting = false;
-      ctx.fillStyle = "pink";
+      var painting = false;
+      // ctx.strokeStyle = color;
+      console.log(ctx.fillStyle);
       ctx.lineWidth = 8;
       ctx.lineCap = "round";
       let last = [];
@@ -62,6 +107,7 @@
         };
       } else {
         canvas.onmousedown = (e) => {
+          console.log(e);
           painting = true;
           last = [e.clientX, e.clientY];
         };

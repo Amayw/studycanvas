@@ -20,21 +20,61 @@
     <script>
       let canvas = document.getElementById("canvas");
       let ctx = canvas.getContext("2d");
+
       canvas.width = document.documentElement.clientWidth;
       canvas.height = document.documentElement.clientHeight;
+
       let painting = false;
       ctx.fillStyle = "pink";
-      canvas.onmousedown = () => {
-        painting = true;
-      };
-      canvas.onmousemove = (e) => {
-        if (painting === true) {
-          ctx.fillRect(e.clientX, e.clientY, 6, 6);
-        }
-      };
-      canvas.onmouseup = () => {
-        painting = false;
-      };
+      ctx.lineWidth = 8;
+      ctx.lineCap = "round";
+      let last = [];
+      if (canvas.width < 400) {
+        canvas.ontouchstart = (e) => {
+          painting = true;
+          last = [e.touches[0].clientX, e.touches[0].clientY];
+        };
+        console.log(1);
+        canvas.ontouchmove = (e) => {
+          console.log(e);
+          if (painting === true) {
+            console.log(e);
+            drawline(
+              last[0],
+              last[1],
+              e.touches[0].clientX,
+              e.touches[0].clientY
+            );
+            last = [e.touches[0].clientX, e.touches[0].clientY];
+          }
+        };
+        canvas.ontouchend = () => {
+          console.log(2);
+          painting = false;
+        };
+      } else {
+        canvas.onmousedown = (e) => {
+          painting = true;
+          last = [e.clientX, e.clientY];
+        };
+        canvas.onmousemove = (e) => {
+          if (painting === true) {
+            drawline(last[0], last[1], e.clientX, e.clientY);
+            last = [e.clientX, e.clientY];
+          }
+        };
+        canvas.onmouseup = () => {
+          painting = false;
+        };
+      }
+
+      //画线函数
+      function drawline(x, y, x1, y1) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x1, y1);
+        ctx.stroke();
+      }
     </script>
   </body>
 </html>
